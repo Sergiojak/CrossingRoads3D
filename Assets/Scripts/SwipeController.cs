@@ -26,7 +26,10 @@ public class SwipeController : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI pasosText;
 
-    int paso;
+    [SerializeField]
+    GameObject tryAgainCanvasScreen;
+
+    public int stepsRemaining = 20;
 
     //singletone
     private void Awake()
@@ -43,7 +46,7 @@ public class SwipeController : MonoBehaviour
 
     void Update()
     {
-        pasosText.text = "Pasos: " + paso;
+        pasosText.text = "Steps remaining: " + stepsRemaining;
        // Debug.Log(Input.mousePosition); //Nos devuelve la posición del ratón
 
         //Vamos a guardar la posición inicial al clickar y la final al soltar el click, para calcular el vector y determinar si el movimiento ha sido arrastrando a la izq, drcha, arriba o abajo
@@ -60,8 +63,10 @@ public class SwipeController : MonoBehaviour
             Vector3 diferencia = alSoltarClick - clickInicial;
             //Debug.Log(diferencia); //devuelve la trayectoria 
 
+            stepsRemaining--;
 
-          if (Mathf.Abs(diferencia.magnitude) > offset)
+
+            if (Mathf.Abs(diferencia.magnitude) > offset)
           {
             diferencia = diferencia.normalized;
             diferencia.z = diferencia.y;
@@ -84,6 +89,13 @@ public class SwipeController : MonoBehaviour
                     OnSwype(diferencia);
             }
           }
+        }
+
+        if (stepsRemaining <= 0)
+        {
+            tryAgainCanvasScreen.SetActive(true);
+            Time.timeScale = 0f;
+            Destroy(pasosText);           
         }
     }
     //Movimos el MoveTarget al MovimientoJugador (el suscriber)

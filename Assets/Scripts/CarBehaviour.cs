@@ -5,13 +5,7 @@ using UnityEngine;
 public class CarBehaviour : MonoBehaviour
 {
     public Transform[] waypoints;
-
-
     public float carSpeed = 5f;
-
-    void Start()
-    {
-    }
 
     void Update()
     {

@@ -39,16 +39,18 @@ public class PlayerBehaviour : MonoBehaviour
     {
         coinAmountText.text = "Coins: " + coinAmount;
 
-        if (coinAmount >= 2)
+        if (coinAmount >= 4)
         {
             canvasWinScreen.SetActive(true);
+            Time.timeScale = 0f;  //para pausar el juego, si quisiese reproducirlo de nuevo tendría que poner el Time.timeScale de nuevo a 1.
+
         }
     }
 
 
     public void OnDestroy()
     {
-       //Elimina suscripción (para que deje de hacer si se desactiva el GameObject)
+       //Elimina suscripción (para que deje de funcionar si se desactiva el GameObject)
        SwipeController.instance.OnSwype -= MoveTarget;
     }
 
@@ -70,20 +72,12 @@ public class PlayerBehaviour : MonoBehaviour
         {
             rb.isKinematic = true;
             Destroy(player);
-
-        
             canvasLoseScreen.SetActive(true);
-         
+            Time.timeScale = 0f;
         }
-
         if (other.gameObject.CompareTag("Coin"))
         {
             coinAmount++;
         }
-
-    }
-    void EndLevel()
-    {
-
     }
 }
