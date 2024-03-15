@@ -31,6 +31,8 @@ public class SwipeController : MonoBehaviour
 
     public int stepsRemaining = 20;
 
+    bool isJumping = false;
+
     //singletone
     private void Awake()
     {
@@ -65,32 +67,36 @@ public class SwipeController : MonoBehaviour
 
             stepsRemaining--;
 
+            isJumping = true;
+
+            if(isJumping == true)
+            {
+
+            }
 
             if (Mathf.Abs(diferencia.magnitude) > offset)
-          {
-            diferencia = diferencia.normalized;
-            diferencia.z = diferencia.y;
-
-
-            if(Mathf.Abs(diferencia.x) > Mathf.Abs(diferencia.z))
             {
+                diferencia = diferencia.normalized;
+                diferencia.z = diferencia.y;
+
+                if(Mathf.Abs(diferencia.x) > Mathf.Abs(diferencia.z))
+                {
                     diferencia.z = 0.0f;
-            }
-            else
-            {
+                }
+                else
+                {
                     Debug.Log("No muevo X");
                     diferencia.x = 0.0f;
-            }
+                }
 
                 diferencia.y = 0.0f;
 
-            if (OnSwype != null)
-            {
+                if (OnSwype != null)
+                {
                     OnSwype(diferencia);
+                }
             }
-          }
         }
-
         if (stepsRemaining <= 0)
         {
             tryAgainCanvasScreen.SetActive(true);
