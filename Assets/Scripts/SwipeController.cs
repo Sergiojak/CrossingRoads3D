@@ -24,14 +24,7 @@ public class SwipeController : MonoBehaviour
     public event Swype OnSwype;
 
     [SerializeField]
-    TextMeshProUGUI pasosText;
-
-    [SerializeField]
     GameObject tryAgainCanvasScreen;
-
-    public int stepsRemaining = 20;
-
-    bool isJumping = false;
 
     //singletone
     private void Awake()
@@ -48,7 +41,6 @@ public class SwipeController : MonoBehaviour
 
     void Update()
     {
-        pasosText.text = "Steps remaining: " + stepsRemaining;
        // Debug.Log(Input.mousePosition); //Nos devuelve la posición del ratón
 
         //Vamos a guardar la posición inicial al clickar y la final al soltar el click, para calcular el vector y determinar si el movimiento ha sido arrastrando a la izq, drcha, arriba o abajo
@@ -57,7 +49,7 @@ public class SwipeController : MonoBehaviour
         {
             clickInicial = Input.mousePosition;
         }
-
+        //al soltar click del ratón calcula la distancia por la que hemos movido el ratón
         if (Input.GetMouseButtonUp(0))
         {
             alSoltarClick = Input.mousePosition;
@@ -65,14 +57,6 @@ public class SwipeController : MonoBehaviour
             Vector3 diferencia = alSoltarClick - clickInicial;
             //Debug.Log(diferencia); //devuelve la trayectoria 
 
-            stepsRemaining--;
-
-            isJumping = true;
-
-            if(isJumping == true)
-            {
-
-            }
 
             if (Mathf.Abs(diferencia.magnitude) > offset)
             {
@@ -85,8 +69,8 @@ public class SwipeController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("No muevo X");
                     diferencia.x = 0.0f;
+
                 }
 
                 diferencia.y = 0.0f;
@@ -96,12 +80,6 @@ public class SwipeController : MonoBehaviour
                     OnSwype(diferencia);
                 }
             }
-        }
-        if (stepsRemaining <= 0)
-        {
-            tryAgainCanvasScreen.SetActive(true);
-            Time.timeScale = 0f;
-            Destroy(pasosText);           
         }
     }
     //Movimos el MoveTarget al MovimientoJugador (el suscriber)

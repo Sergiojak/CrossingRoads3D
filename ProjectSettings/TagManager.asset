@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Coche
   - Coin
+  - Obstacle
+  - Ground
+  - Water
+  - Log
   layers:
   - Default
   - TransparentFX
