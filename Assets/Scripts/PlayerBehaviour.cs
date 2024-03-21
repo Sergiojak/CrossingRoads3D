@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-
 public class PlayerBehaviour : MonoBehaviour
 {
     SwipeController swipeController;
@@ -87,6 +85,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.tag == "Log")
         {
             transform.parent = other.transform;
+            LeanTween.cancel(gameObject);
         }
     }
     private void OnTriggerExit(Collider other)
@@ -102,5 +101,14 @@ public class PlayerBehaviour : MonoBehaviour
         {
             isJumping = false;
         }
+    }
+
+    public void SetScore(string KeyName, int Value)
+    {
+        //PlayerPrefs.SetInt(steps, value);
+    }
+    public void GetScore(string KeyName, int Value)
+    {
+        //PlayerPrefs.SetInt(steps, value);
     }
 }
