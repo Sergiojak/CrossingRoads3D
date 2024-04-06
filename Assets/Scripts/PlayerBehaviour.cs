@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.EventSystems;
 public class PlayerBehaviour : MonoBehaviour
 {
-    SwipeController swipeController;
+    public SwipeController swipeController;
 
-    public SwipeController eventoEnter;
+    public static RaycastHit raycastDirection;
 
     [SerializeField]
     GameObject player;
@@ -15,18 +16,30 @@ public class PlayerBehaviour : MonoBehaviour
     public float jumpDistance = 1.5f;
     public float timeAnim = 0.25f;
     public bool isJumping;
-
-    [SerializeField]
-    TextMeshProUGUI coinAmountText;
-    int coinAmount = 0;
-
+    
     [SerializeField]
     GameObject canvasLoseScreen;
 
+    [SerializeField]
+    TextMeshProUGUI stepsText;
+    int steps;
+    private int stepsRecord = 0;
 
     [SerializeField]
-    TextMeshProUGUI pasosText;
-    public int steps;
+    TextMeshProUGUI coinAmountText;
+
+    [SerializeField]
+    GameObject coinText;
+
+    int coinAmount;
+    float textOnScreen;
+    bool needTextOnScreen = false;
+    public float speedText = 50;
+
+    public void Awake()
+    {
+        player = this.gameObject;
+    }
 
     private void Start()
     {
@@ -36,11 +49,51 @@ public class PlayerBehaviour : MonoBehaviour
         SwipeController.instance.OnSwype += MoveTarget;
 
         rb = GetComponent<Rigidbody>();
+
+        //coinAmount = PlayerPrefs.GetInt("Coins", 0);
+
+        //que el texto se ponga transparente
+
+
+        steps = PlayerPrefs.GetInt("Score", 0);
+        stepsRecord = PlayerPrefs.GetInt("Record", 0);
+
+        UpdateStepText();
     }
     private void Update()
     {
-        pasosText.text = "Steps: " + steps;
+        //stepsText.text = "Steps: " + steps;
         coinAmountText.text = "Coins: " + coinAmount;
+  
+        if (needTextOnScreen == true)
+        {
+            //que se ponga opaco
+
+            textOnScreen += Time.deltaTime;
+            if(textOnScreen >= 2)
+            {
+                needTextOnScreen = false;
+            }
+        }
+        else
+        {
+            //que se ponga transparente
+        }
+
+        PlayerPrefs.SetInt("Steps", steps);
+        PlayerPrefs.Save();
+
+        if (steps > stepsRecord)
+        {
+            stepsRecord = steps;
+            PlayerPrefs.SetInt("Record", stepsRecord);
+            PlayerPrefs.Save();
+        }
+
+        /*PlayerPrefs.SetInt("Coins", coinAmount);
+        PlayerPrefs.Save();*/
+
+        UpdateStepText();
     }
     public void OnDestroy()
     {
@@ -52,21 +105,58 @@ public class PlayerBehaviour : MonoBehaviour
         //para que se mueva y de un saltito
         if(isJumping == false)
         {
-         LeanTween.moveLocal(player, player.transform.position + direction.normalized * jumpDistance + Vector3.up / 2, timeAnim / 2).setOnComplete(() =>
-         {
-             //para que baje del saltito
-            LeanTween.moveLocal(player, player.transform.position + direction.normalized / 2 - Vector3.up / 2, timeAnim / 2);
+            RaycastHit hitinfo;
+            Vector3 moveDirection = direction.normalized;
 
-         });
-            isJumping = true;
-            if(direction.normalized.z == 1)
+            if (Physics.Raycast(transform.position + new Vector3(0, 2f, 0), moveDirection, out hitinfo, 1f))
             {
-                steps++;
+                Debug.Log("Hit Something, Restricting Movement");
+                Debug.DrawRay(transform.position, transform.TransformDirection(0, 0, 1) * hitinfo.distance, Color.red);
+                raycastDirection = hitinfo;
+
+                if (moveDirection.x != 0)
+                {
+                    moveDirection.x = 0;
+                }
             }
-            if (direction.normalized.z == -1)
+            else
             {
-                steps--;
-            }      
+                Debug.DrawRay(transform.position, transform.TransformDirection(0, 0, 1) * 20f, Color.green);
+            }
+
+            if (moveDirection != Vector3.zero)
+            {
+                if (moveDirection.x > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 90f, 0);
+                }
+                else if (moveDirection.x < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, -90f, 0);
+                }
+                else if (moveDirection.z > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 0);
+                }
+                else if (moveDirection.z < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 180f, 0);
+                }
+
+                LeanTween.move(player, player.transform.position + Vector3.up / 2, timeAnim / 2).setOnComplete(() =>
+                {
+                    //para que baje del saltito
+                    LeanTween.move(player, player.transform.position - Vector3.up / 2, timeAnim / 2);
+                });
+                if (direction.normalized.z == 1)
+                {
+                    steps++;
+                }
+                if (direction.normalized.z == -1)
+                {
+                    steps--;
+                }
+            }
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -78,10 +168,13 @@ public class PlayerBehaviour : MonoBehaviour
             canvasLoseScreen.SetActive(true);
             Time.timeScale = 0f;
         }
+
         if (other.gameObject.CompareTag("Coin"))
         {
             coinAmount++;
+            needTextOnScreen = true;
         }
+
         if (other.gameObject.tag == "Log")
         {
             transform.parent = other.transform;
@@ -95,20 +188,23 @@ public class PlayerBehaviour : MonoBehaviour
             transform.parent = null;
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
         {
             isJumping = false;
         }
     }
-
-    public void SetScore(string KeyName, int Value)
+    private void OnCollisionExit(Collision collision)
     {
-        //PlayerPrefs.SetInt(steps, value);
+        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
+        {
+            isJumping = true;
+        }
     }
-    public void GetScore(string KeyName, int Value)
+    private void UpdateStepText()
     {
-        //PlayerPrefs.SetInt(steps, value);
+        stepsText.text = "Score: " + steps.ToString() + "/Record: " + stepsRecord.ToString();
+       // coinAmountText.text = "Coins:" + coinAmount.ToString();
     }
 }

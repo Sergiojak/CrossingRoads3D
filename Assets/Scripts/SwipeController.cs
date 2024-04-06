@@ -14,7 +14,7 @@ public class SwipeController : MonoBehaviour
     Vector3 clickInicial;
     Vector3 alSoltarClick;
 
-    public float offset = 100f;
+    public float offset = 75f;
 
     //singletone
     public static SwipeController instance;
