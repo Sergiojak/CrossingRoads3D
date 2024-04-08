@@ -18,6 +18,8 @@ public class LevelBehaviour : MonoBehaviour
     public float jumpDistance = 1.5f;
     public float timeAnim = 0.25f;
 
+    public bool isAtInfiniteLevel = false;
+
     public void Awake()
     {
         ground = this.gameObject;
@@ -39,7 +41,7 @@ public class LevelBehaviour : MonoBehaviour
 
         if (playerBehaviour != null && isJumping == false)
         {
-            if (Physics.Raycast(playerBehaviour.transform.position + new Vector3(0, 1f, 0), direction, out raycastHit, 1f))
+            if (Physics.Raycast(playerBehaviour.transform.position + new Vector3(0, 2f, 0), direction, out raycastHit, 1f))
             {
                 if (raycastHit.collider.tag != "ProceduralTerrain")
                 {
@@ -51,21 +53,25 @@ public class LevelBehaviour : MonoBehaviour
             }
             if (direction != Vector3.zero)
             {
-                LeanTween.move(ground, ground.transform.position + -direction.normalized * jumpDistance, timeAnim / 2).setOnComplete(() =>
+                if(isAtInfiniteLevel == false)
                 {
-                     //para que baje del saltito
-                     LeanTween.move(ground, ground.transform.position + -direction.normalized / 2, timeAnim / 2);
-                });
+                    LeanTween.move(ground, ground.transform.position + -direction.normalized * jumpDistance, timeAnim / 2).setOnComplete(() =>
+                    {
+                        //para que baje del saltito
+                        LeanTween.move(ground, ground.transform.position + -direction.normalized / 2, timeAnim / 2);
+                    });
+                }
 
-                if (direction.normalized.z == 1)
+               /* if (direction.normalized.z == 1)
                 {
+
                     steps++;
                 }
 
                 if (direction.normalized.z == -1)
                 {
-                    steps--;
-                }
+                   
+                }*/
             }
         }
     }
@@ -90,6 +96,14 @@ public class LevelBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             isJumping = true;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            //desactivado
         }
     }
 }

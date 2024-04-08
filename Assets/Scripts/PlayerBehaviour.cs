@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
+using UnityEngine;
+using UnityEngine.UI;
 public class PlayerBehaviour : MonoBehaviour
 {
     public SwipeController swipeController;
+    public CoinBehaviour coinBehaviour;
+
 
     public static RaycastHit raycastDirection;
 
@@ -25,16 +27,6 @@ public class PlayerBehaviour : MonoBehaviour
     int steps;
     private int stepsRecord = 0;
 
-    [SerializeField]
-    TextMeshProUGUI coinAmountText;
-
-    [SerializeField]
-    GameObject coinText;
-
-    int coinAmount;
-    float textOnScreen;
-    bool needTextOnScreen = false;
-    public float speedText = 50;
 
     public void Awake()
     {
@@ -50,11 +42,6 @@ public class PlayerBehaviour : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
 
-        //coinAmount = PlayerPrefs.GetInt("Coins", 0);
-
-        //que el texto se ponga transparente
-
-
         steps = PlayerPrefs.GetInt("Score", 0);
         stepsRecord = PlayerPrefs.GetInt("Record", 0);
 
@@ -63,22 +50,17 @@ public class PlayerBehaviour : MonoBehaviour
     private void Update()
     {
         //stepsText.text = "Steps: " + steps;
-        coinAmountText.text = "Coins: " + coinAmount;
   
-        if (needTextOnScreen == true)
+        /*if (textOnScreen == true)
         {
-            //que se ponga opaco
-
-            textOnScreen += Time.deltaTime;
-            if(textOnScreen >= 2)
+            textShowing += Time.deltaTime;
+            if(textShowing >= 2f) 
             {
-                needTextOnScreen = false;
+                textShowing = 0f;
+                LeanTween.value(gameObject, UpdateAplhaText, 1f, 0f, 2f);
+                textOnScreen = false;
             }
-        }
-        else
-        {
-            //que se ponga transparente
-        }
+        }*/
 
         PlayerPrefs.SetInt("Steps", steps);
         PlayerPrefs.Save();
@@ -93,7 +75,7 @@ public class PlayerBehaviour : MonoBehaviour
         /*PlayerPrefs.SetInt("Coins", coinAmount);
         PlayerPrefs.Save();*/
 
-        UpdateStepText();
+            UpdateStepText();
     }
     public void OnDestroy()
     {
@@ -168,11 +150,11 @@ public class PlayerBehaviour : MonoBehaviour
             canvasLoseScreen.SetActive(true);
             Time.timeScale = 0f;
         }
-
-        if (other.gameObject.CompareTag("Coin"))
+        if (other.gameObject.tag == "Coin")
         {
-            coinAmount++;
-            needTextOnScreen = true;
+            coinBehaviour.coinAmount += 1;
+            other.gameObject.SetActive(false);
+            coinBehaviour.ShowCoinUI();
         }
 
         if (other.gameObject.tag == "Log")
@@ -204,7 +186,10 @@ public class PlayerBehaviour : MonoBehaviour
     }
     private void UpdateStepText()
     {
-        stepsText.text = "Score: " + steps.ToString() + "/Record: " + stepsRecord.ToString();
-       // coinAmountText.text = "Coins:" + coinAmount.ToString();
+        stepsText.text = "Score: " + steps.ToString() + "\nRecord: " + stepsRecord.ToString();
     }
+    /*private void UpdateAplhaText(float alpha)
+    {
+        coinAmountText.alpha = alpha;
+    }*/
 }

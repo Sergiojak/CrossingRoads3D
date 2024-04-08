@@ -10,6 +10,7 @@ TagManager:
   - Ground
   - Water
   - Log
+  - Desactivador
   layers:
   - Default
   - TransparentFX
