@@ -90,7 +90,7 @@ public class PlayerBehaviour : MonoBehaviour
             RaycastHit hitinfo;
             Vector3 moveDirection = direction.normalized;
 
-            if (Physics.Raycast(transform.position + new Vector3(0, 2f, 0), moveDirection, out hitinfo, 1f))
+            if (Physics.Raycast(transform.position + new Vector3(0, 1f, 0), moveDirection, out hitinfo, 1f))
             {
                 Debug.Log("Hit Something, Restricting Movement");
                 Debug.DrawRay(transform.position, transform.TransformDirection(0, 0, 1) * hitinfo.distance, Color.red);

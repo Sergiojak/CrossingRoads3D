@@ -11,6 +11,7 @@ TagManager:
   - Water
   - Log
   - Desactivador
+  - Level
   layers:
   - Default
   - TransparentFX

@@ -5,15 +5,8 @@ using TMPro;
 
 public class SwipeController : MonoBehaviour
 {
-    //Este sería el event Creator
-    SwipeController swipeController;
-
-    [SerializeField]
-    GameObject player;
-
     Vector3 clickInicial;
     Vector3 alSoltarClick;
-
     public float offset = 75f;
 
     //singletone
@@ -22,9 +15,6 @@ public class SwipeController : MonoBehaviour
     //declarar delegado y evento para movimiento
     public delegate void Swype(Vector3 direction);
     public event Swype OnSwype;
-
-    [SerializeField]
-    GameObject tryAgainCanvasScreen;
 
     //singletone
     private void Awake()
