@@ -34,7 +34,7 @@ public class PropsBehaviour : MonoBehaviour
     {
         RaycastHit pb_HitInfo = PlayerBehaviour.raycastDirection;
 
-        if (playerBehaviour.isJumping == false)
+        if (playerBehaviour.canJump == false)
         {
             if (Physics.Raycast(player.transform.position + new Vector3(0, 1f, 0), pb_Direction, out pb_HitInfo, 1f))
             {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1695935216419741750}
   - component: {fileID: 3489686431026566396}
   - component: {fileID: 596897647679864432}
-  - component: {fileID: -2703875261536044119}
+  - component: {fileID: 1651702352852532061}
   m_Layer: 0
   m_Name: PirateCoin
   m_TagString: Coin
@@ -99,7 +99,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -127844609115117539, guid: 5d0dbe9cd045eb6458b6aa0a6ffc0235, type: 3}
---- !u!114 &-2703875261536044119
+--- !u!114 &1651702352852532061
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,11 +108,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3129200342344496425}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b26c8c576063b414397357651d8b6724, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f9068df25f079543886bc6961b10c19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coin: {fileID: 3129200342344496425}
-  coinAmountText: {fileID: 0}
-  coinAmount: 0
-  coinUI: {fileID: 0}
-  displayDuration: 2

@@ -1,143 +1,126 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class PlayerBehaviour : MonoBehaviour
 {
-    public SwipeController swipeController;
     public CoinBehaviour coinBehaviour;
+    public LevelBehaviour levelBehaviour;
 
-
+    public static PlayerBehaviour instance;
     public static RaycastHit raycastDirection;
 
     [SerializeField]
-    GameObject player;
+    public GameObject player;
+    [SerializeField]
+    SkinnedMeshRenderer playerMesh;
     Rigidbody rb;
+    [SerializeField]
+    BoxCollider playerCollider;
 
     public float jumpDistance = 1.5f;
     public float timeAnim = 0.25f;
-    public bool isJumping;
-    
+    public bool canJump = true;
+
+    public int steps = 0;
+    public int stepsBack = 0;
+  
     [SerializeField]
-    GameObject canvasLoseScreen;
+    CanvasGroup canvasGroupLoseScreen;
+    public bool needLoseCanvas = false;
 
     [SerializeField]
-    TextMeshProUGUI stepsText;
-    int steps;
-    private int stepsRecord = 0;
+    TextMeshProUGUI coinEndgameText;
 
 
     public void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
         player = this.gameObject;
     }
 
     private void Start()
     {
         player = this.gameObject;
-        swipeController = SwipeController.instance;
 
         SwipeController.instance.OnSwype += MoveTarget;
 
         rb = GetComponent<Rigidbody>();
 
-        steps = PlayerPrefs.GetInt("Score", 0);
-        stepsRecord = PlayerPrefs.GetInt("Record", 0);
-
-        UpdateStepText();
     }
-    private void Update()
+
+    public void OnDisable()
     {
-        //stepsText.text = "Steps: " + steps;
-  
-        /*if (textOnScreen == true)
-        {
-            textShowing += Time.deltaTime;
-            if(textShowing >= 2f) 
-            {
-                textShowing = 0f;
-                LeanTween.value(gameObject, UpdateAplhaText, 1f, 0f, 2f);
-                textOnScreen = false;
-            }
-        }*/
-
-        PlayerPrefs.SetInt("Steps", steps);
-        PlayerPrefs.Save();
-
-        if (steps > stepsRecord)
-        {
-            stepsRecord = steps;
-            PlayerPrefs.SetInt("Record", stepsRecord);
-            PlayerPrefs.Save();
-        }
-
-        /*PlayerPrefs.SetInt("Coins", coinAmount);
-        PlayerPrefs.Save();*/
-
-            UpdateStepText();
+        SwipeController.instance.OnSwype -= MoveTarget;
     }
+
     public void OnDestroy()
     {
-       //Elimina suscripción (para que deje de funcionar si se desactiva el GameObject)
        SwipeController.instance.OnSwype -= MoveTarget;
     }
-    void MoveTarget(Vector3 direction)
+    void MoveTarget(Vector3 directionOfSwype)
     {
-        //para que se mueva y de un saltito
-        if(isJumping == false)
+        if (canJump)
         {
-            RaycastHit hitinfo;
-            Vector3 moveDirection = direction.normalized;
+            Vector3 playerDirection = directionOfSwype.normalized;
+            RaycastHit hitRay;
 
-            if (Physics.Raycast(transform.position + new Vector3(0, 1f, 0), moveDirection, out hitinfo, 1f))
+            if (Physics.Raycast(transform.position + new Vector3(0, 1f, 0), playerDirection, out hitRay, 2f))
             {
                 Debug.Log("Hit Something, Restricting Movement");
-                Debug.DrawRay(transform.position, transform.TransformDirection(0, 0, 1) * hitinfo.distance, Color.red);
-                raycastDirection = hitinfo;
 
-                if (moveDirection.x != 0)
+                if (playerDirection.x != 0)
                 {
-                    moveDirection.x = 0;
+                    playerDirection.x = 0;
                 }
             }
-            else
+            //Rotación del jugador
+            if (playerDirection != Vector3.zero)
             {
-                Debug.DrawRay(transform.position, transform.TransformDirection(0, 0, 1) * 20f, Color.green);
-            }
-
-            if (moveDirection != Vector3.zero)
-            {
-                if (moveDirection.x > 0)
+                if (playerDirection.x > 0)
                 {
                     transform.eulerAngles = new Vector3(0, 90f, 0);
                 }
-                else if (moveDirection.x < 0)
+                else if (playerDirection.x < 0)
                 {
                     transform.eulerAngles = new Vector3(0, -90f, 0);
                 }
-                else if (moveDirection.z > 0)
+                else if (playerDirection.z > 0)
                 {
                     transform.eulerAngles = new Vector3(0, 0, 0);
                 }
-                else if (moveDirection.z < 0)
+                else if (playerDirection.z < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 180f, 0);
+                    transform.eulerAngles = new Vector3(0, 180, 0);
+                }
+                //Movimiento HORIZONTAL del jugador y animación de saltito
+                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) + Vector3.up / 2, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+                {
+                    //baja del saltito
+                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) - Vector3.up / 2, timeAnim / 2).setEase(LeanTweenType.easeOutQuad);
+                });
+
+                //sumar y restar steps
+                if (directionOfSwype.normalized.z < 0 && stepsBack < 3)  //abajo y que se sumen los stepsback
+                {
+                    stepsBack++;
                 }
 
-                LeanTween.move(player, player.transform.position + Vector3.up / 2, timeAnim / 2).setOnComplete(() =>
-                {
-                    //para que baje del saltito
-                    LeanTween.move(player, player.transform.position - Vector3.up / 2, timeAnim / 2);
-                });
-                if (direction.normalized.z == 1)
+                if (directionOfSwype.normalized.z > 0 && stepsBack == 0 && levelBehaviour.stopAddingSteps == false) //arriba y que sume si los steps back son cero 
                 {
                     steps++;
                 }
-                if (direction.normalized.z == -1)
-                {
-                    steps--;
+                if (directionOfSwype.normalized.z > 0 && stepsBack > 0)
+                { 
+                    stepsBack--;
                 }
+                canJump = false;
             }
         }
     }
@@ -145,10 +128,14 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Coche")|| other.gameObject.CompareTag("Water"))
         {
+            //para que no se mueva de ninguna manera, no se vea y no se active el isJumping de nuevo
             rb.isKinematic = true;
-            Destroy(player);
-            canvasLoseScreen.SetActive(true);
-            Time.timeScale = 0f;
+            playerMesh.enabled = false;
+            playerCollider.enabled = false;
+            SwipeController.instance.enabled = false;
+
+            //muestra el canvas
+            needLoseCanvas = true;
         }
         if (other.gameObject.tag == "Coin")
         {
@@ -170,26 +157,16 @@ public class PlayerBehaviour : MonoBehaviour
             transform.parent = null;
         }
     }
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
         {
-            isJumping = false;
+            canJump = true;
         }
     }
-    private void OnCollisionExit(Collision collision)
+    public void ShowLoseScreenUI()
     {
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
-        {
-            isJumping = true;
-        }
+        LeanTween.alphaCanvas(canvasGroupLoseScreen, 1f, 1);
+        coinEndgameText.text = "Coins: " + coinBehaviour.coinAmount;
     }
-    private void UpdateStepText()
-    {
-        stepsText.text = "Score: " + steps.ToString() + "\nRecord: " + stepsRecord.ToString();
-    }
-    /*private void UpdateAplhaText(float alpha)
-    {
-        coinAmountText.alpha = alpha;
-    }*/
 }

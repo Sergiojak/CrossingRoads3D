@@ -5,8 +5,6 @@ using TMPro;
 
 public class CoinBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    GameObject coin;
 
     [SerializeField]
     TextMeshProUGUI coinAmountText;
@@ -14,18 +12,17 @@ public class CoinBehaviour : MonoBehaviour
 
     public CanvasGroup coinUI;
     float fadeDuration = 1f;
-    public float displayDuration = 2f;
+    public float timeShowing = 2f;
 
     private void Start()
     {
         coinAmount = PlayerPrefs.GetInt("Coin", 0);
-        coinAmountText.text = "Coins: " + coinAmount;
         UpdateCoinText();
+        LeanTween.alphaCanvas(coinUI, 0f,2).setEase(LeanTweenType.easeInOutQuad);
     }
 
     void Update()
     {
-        transform.Rotate(0f, 0f, 1f);
         PlayerPrefs.SetInt("Coins", coinAmount);
         PlayerPrefs.Save();
         UpdateCoinText();
@@ -41,7 +38,7 @@ public class CoinBehaviour : MonoBehaviour
         LeanTween.cancel(coinUI.gameObject);
         LeanTween.alphaCanvas(coinUI, 1f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setOnComplete(() =>
         {
-            LeanTween.alphaCanvas(coinUI, 0f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setDelay(displayDuration).setOnComplete(() =>
+            LeanTween.alphaCanvas(coinUI, 0f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setDelay(timeShowing).setOnComplete(() =>
             {
                 coinUI.alpha = 0f;
             });

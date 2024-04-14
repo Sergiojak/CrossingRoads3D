@@ -13,7 +13,7 @@ public class PlaceProp : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Prop"))
+        if (other.CompareTag("Ground"))
         {
             // Si el objeto que sale del trigger es un "prop" y es el mismo trigger seleccionado, generar un nuevo objeto
             randomPrefabSpawner.SpawnRandomPrefab();
