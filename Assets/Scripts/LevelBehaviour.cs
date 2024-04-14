@@ -3,8 +3,6 @@ using UnityEngine.EventSystems;
 
 public class LevelBehaviour : MonoBehaviour
 {
-    public PlayerBehaviour playerBehaviour;
-
     public GameObject ground;
 
     float jumpDistance = 2f;
@@ -30,11 +28,11 @@ public class LevelBehaviour : MonoBehaviour
     {
         RaycastHit raycastHit = PlayerBehaviour.raycastDirection;
 
-        if (playerBehaviour != null && playerBehaviour.canJump == true)
+        if (PlayerBehaviour.instance != null && PlayerBehaviour.instance.canJump == true)
         {
-            if (Physics.Raycast(playerBehaviour.transform.position + new Vector3(0, 1f, 0f), direction, out raycastHit, 2f))
+            if (Physics.Raycast(PlayerBehaviour.instance.transform.position + new Vector3(0, 1f, 0f), direction, out raycastHit, 2f))
             {
-                if (raycastHit.collider.tag != "Ground" && raycastHit.collider.tag != "Coche")
+                if (raycastHit.collider.tag != "Ground" && raycastHit.collider.tag != "Log")
                 {
                     if (direction.z != 0)
                     {
@@ -55,7 +53,7 @@ public class LevelBehaviour : MonoBehaviour
                 stopAddingSteps = false;
             }
 
-            if (direction.z < 0 && playerBehaviour.stepsBack < 3)
+            if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
                 LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
             }

@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+
 
 public class SwipeController : MonoBehaviour
 {
     Vector3 clickInicial;
     Vector3 alSoltarClick;
+    Vector3 s_Click;
+
     public float offset = 75f;
 
     //singletone
@@ -35,12 +35,14 @@ public class SwipeController : MonoBehaviour
 
         //Vamos a guardar la posición inicial al clickar y la final al soltar el click, para calcular el vector y determinar si el movimiento ha sido arrastrando a la izq, drcha, arriba o abajo
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && PlayerBehaviour.instance.playerIsDEAD == false)
         {
             clickInicial = Input.mousePosition;
+            s_Click = Vector3.forward;
+
         }
         //al soltar click del ratón calcula la distancia por la que hemos movido el ratón
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && PlayerBehaviour.instance.playerIsDEAD == false)
         {
             alSoltarClick = Input.mousePosition;
             //Debug.Log("Posición inicial" + clickInicial + " posición final " + alSoltarClick); //Devuelve la posición inicial y la final del click
@@ -68,6 +70,15 @@ public class SwipeController : MonoBehaviour
                 if (OnSwype != null)
                 {
                     OnSwype(diferencia);
+                }
+            }
+            else
+            {
+                Vector3 click = s_Click;
+
+                if (OnSwype != null)
+                {
+                    OnSwype(click);
                 }
             }
         }
