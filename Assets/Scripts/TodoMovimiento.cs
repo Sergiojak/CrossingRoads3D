@@ -1,19 +1,21 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class LevelBehaviour : MonoBehaviour
+public class TodoMovimiento : MonoBehaviour
 {
-    public GameObject ground;
-
     float jumpDistance = 2f;
     public float timeAnim = 0.25f;
     public bool stopAddingSteps = false;
+
+
+    public GameObject ground;
+
+    //el CanMove lo tengo en el player
 
     public void Awake()
     {
         ground = this.gameObject;
     }
-
     public void Start()
     {
         SwipeController.instance.OnSwype += MoveTarget;
@@ -38,20 +40,14 @@ public class LevelBehaviour : MonoBehaviour
                     {
                         direction.z = 0;
                     }
-                   /* if (direction.x != 0)
-                    {
-                        direction.x = 0;
-                    }*/
+                    /* if (direction.x != 0)
+                     {
+                         direction.x = 0;
+                     }*/
                 }
-                if (raycastHit.collider.tag == "Obstacle")
-                {
-                    stopAddingSteps = true;
-                }             
+              
             }
-            else
-            {
-                stopAddingSteps = false;
-            }
+           
 
             if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
@@ -63,10 +59,18 @@ public class LevelBehaviour : MonoBehaviour
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador
-           /* if (new Vector3(direction.x, 0, 0) != Vector3.zero)
-            {
-                LeanTween.move(ground, ground.transform.position + new Vector3(-direction.x, 0, 0) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //horizontal
-            }*/
+            /* if (new Vector3(direction.x, 0, 0) != Vector3.zero)
+             {
+                 LeanTween.move(ground, ground.transform.position + new Vector3(-direction.x, 0, 0) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //horizontal
+             }*/
         }
     }
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerBehaviour.instance.canJump = true;
+        }
+    }
+
 }

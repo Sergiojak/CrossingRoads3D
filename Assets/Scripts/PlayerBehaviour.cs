@@ -5,7 +5,6 @@ public class PlayerBehaviour : MonoBehaviour
 {
     public CoinBehaviour coinBehaviour;
     public LevelBehaviour levelBehaviour;
-    public Movimiento movimientoLevels;
 
     public static PlayerBehaviour instance;
     public static RaycastHit raycastDirection;
@@ -13,6 +12,7 @@ public class PlayerBehaviour : MonoBehaviour
     public bool playerIsDEAD = false;
     public bool moveLevel = true;
 
+    float jumpDistance = 2f;
 
     [SerializeField]
     public GameObject player;
@@ -111,10 +111,10 @@ public class PlayerBehaviour : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 180, 0);
                 }
                 //Movimiento HORIZONTAL del jugador y animación de saltito
-                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) + Vector3.up / 2, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
                 {
                     //baja del saltito
-                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) - Vector3.up / 2, timeAnim / 2).setEase(LeanTweenType.easeOutQuad);
+                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnim / 2 ).setEase(LeanTweenType.easeOutQuad);
                 });
 
 
@@ -152,7 +152,6 @@ public class PlayerBehaviour : MonoBehaviour
             playerMesh.enabled = false;
             playerCollider.enabled = false;
             SwipeController.instance.enabled = false;
-            movimientoLevels.enabled = false;
 
             //muestra el canvas y activa los botones
             needLoseCanvas = true;
