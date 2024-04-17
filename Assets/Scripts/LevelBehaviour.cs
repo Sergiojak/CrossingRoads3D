@@ -3,11 +3,11 @@ using UnityEngine.EventSystems;
 
 public class LevelBehaviour : MonoBehaviour
 {
+
     public GameObject ground;
 
     float jumpDistance = 2f;
     public float timeAnim = 0.25f;
-    public bool stopAddingSteps = false;
 
     public void Awake()
     {
@@ -38,28 +38,20 @@ public class LevelBehaviour : MonoBehaviour
                     {
                         direction.z = 0;
                     }
-                   /* if (direction.x != 0)
-                    {
-                        direction.x = 0;
-                    }*/
+                    /* if (direction.x != 0)
+                     {
+                         direction.x = 0;
+                     }*/
                 }
-                if (raycastHit.collider.tag == "Obstacle")
-                {
-                    stopAddingSteps = true;
-                }             
-            }
-            else
-            {
-                stopAddingSteps = false;
             }
 
             if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
+                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
             }
             if (direction.z > 0)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
+                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador

@@ -4,13 +4,13 @@ using UnityEngine.EventSystems;
 public class PlayerBehaviour : MonoBehaviour
 {
     public CoinBehaviour coinBehaviour;
-    public LevelBehaviour levelBehaviour;
+    public TodoMovimiento movimientoTodo;
+    public StepsUI stepsUI;
 
     public static PlayerBehaviour instance;
     public static RaycastHit raycastDirection;
 
     public bool playerIsDEAD = false;
-    public bool moveLevel = true;
 
     float jumpDistance = 2f;
 
@@ -111,10 +111,10 @@ public class PlayerBehaviour : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 180, 0);
                 }
                 //Movimiento HORIZONTAL del jugador y animación de saltito
-                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
                 {
                     //baja del saltito
-                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnim / 2 ).setEase(LeanTweenType.easeOutQuad);
+                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnim / 2 ).setEase(LeanTweenType.easeOutQuad);
                 });
 
 
@@ -124,7 +124,7 @@ public class PlayerBehaviour : MonoBehaviour
                     stepsBack++;
                 }
 
-                if (directionOfSwype.normalized.z > 0 && stepsBack == 0 && levelBehaviour.stopAddingSteps == false) //arriba y que sume si los steps back son cero 
+                if (directionOfSwype.normalized.z > 0 && stepsBack == 0 && movimientoTodo.stopAddingSteps == false) //arriba y que sume si los steps back son cero 
                 {
                     steps++;
                 }
@@ -175,19 +175,26 @@ public class PlayerBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
         {
             canJump = true;
-            moveLevel = true;
         }
     }
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
         {
-            moveLevel = false;
         }
     }
     public void ShowLoseScreenUI()
     {
         LeanTween.alphaCanvas(canvasGroupLoseScreen, 1f, 1);
         coinEndgameText.text = "Coins: " + coinBehaviour.coinAmount;
+        if (stepsUI.activateMedal == true)
+        {
+            stepsUI.medalSprite.SetActive(true);
+            stepsUI.newRecordEndgameText.text = "New Record!" + stepsUI.stepsRecord.ToString();
+        }
+        else
+        {
+            stepsUI.newRecordEndgameText.text = "";
+        }
     }
 }

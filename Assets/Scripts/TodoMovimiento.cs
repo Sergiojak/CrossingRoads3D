@@ -7,7 +7,6 @@ public class TodoMovimiento : MonoBehaviour
     public float timeAnim = 0.25f;
     public bool stopAddingSteps = false;
 
-
     public GameObject ground;
 
     //el CanMove lo tengo en el player
@@ -45,17 +44,25 @@ public class TodoMovimiento : MonoBehaviour
                          direction.x = 0;
                      }*/
                 }
-              
-            }
-           
 
-            if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
-            {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
+                if (raycastHit.collider.tag == "Obstacle")
+                {
+                    stopAddingSteps = true;
+                }
             }
-            if (direction.z > 0)
+            else
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
+                stopAddingSteps = false;
+            }
+
+
+            if (direction.normalized.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
+            {
+                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
+            }
+            if (direction.normalized.z > 0)
+            {
+                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador

@@ -7,13 +7,19 @@ public class StepsUI : MonoBehaviour
 
     [SerializeField]
     TextMeshProUGUI stepsText;
-    private int stepsRecord = 0;
+    public int stepsRecord = 0;
 
     [SerializeField]
     TextMeshProUGUI stepsEndgameText;
+    [SerializeField]
+    public TextMeshProUGUI newRecordEndgameText;
+    public bool activateMedal = false;
+
 
     [SerializeField]
     CanvasGroup canvasGroupLoseScreen;
+
+    public GameObject medalSprite;
 
 
     void Start()
@@ -34,6 +40,7 @@ public class StepsUI : MonoBehaviour
         if (playerBehaviour.steps > stepsRecord)
         {
             stepsRecord = playerBehaviour.steps;
+            activateMedal = true;
             PlayerPrefs.SetInt("Record", stepsRecord);
             PlayerPrefs.Save();
         }
