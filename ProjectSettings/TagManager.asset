@@ -12,6 +12,7 @@ TagManager:
   - Log
   - Desactivador
   - Level
+  - MidLevel
   layers:
   - Default
   - TransparentFX

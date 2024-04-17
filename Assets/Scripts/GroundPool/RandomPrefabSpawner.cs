@@ -40,6 +40,9 @@ public class RandomPrefabSpawner : MonoBehaviour
             activeObject = inactiveObjects[randomIndex];
             activeObject.SetActive(true);
 
+            GameObject coin = activeObject.transform.GetChild(0).gameObject;
+            coin.SetActive(true);
+
             activeObject.transform.position = spawnPoint.transform.position;
 
             inactiveObjects.RemoveAt(randomIndex);
