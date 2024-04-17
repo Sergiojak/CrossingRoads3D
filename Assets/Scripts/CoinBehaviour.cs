@@ -12,7 +12,7 @@ public class CoinBehaviour : MonoBehaviour
 
     public CanvasGroup coinUI;
     float fadeDuration = 1f;
-    public float timeShowing = 2f;
+    public float timer = 2f;
 
     private void Start()
     {
@@ -38,7 +38,7 @@ public class CoinBehaviour : MonoBehaviour
         LeanTween.cancel(coinUI.gameObject);
         LeanTween.alphaCanvas(coinUI, 1f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setOnComplete(() =>
         {
-            LeanTween.alphaCanvas(coinUI, 0f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setDelay(timeShowing).setOnComplete(() =>
+            LeanTween.alphaCanvas(coinUI, 0f, fadeDuration / 2).setEase(LeanTweenType.easeInOutQuad).setDelay(timer).setOnComplete(() =>
             {
                 coinUI.alpha = 0f;
             });

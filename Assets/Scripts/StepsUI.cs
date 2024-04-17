@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class StepsUI : MonoBehaviour
 {
-    public PlayerBehaviour playerBehaviour;
-
     [SerializeField]
     TextMeshProUGUI stepsText;
     public int stepsRecord = 0;
@@ -15,17 +13,13 @@ public class StepsUI : MonoBehaviour
     public TextMeshProUGUI newRecordEndgameText;
     public bool activateMedal = false;
 
-
-    [SerializeField]
-    CanvasGroup canvasGroupLoseScreen;
-
     public GameObject medalSprite;
 
 
     void Start()
     {
 
-        playerBehaviour.steps = PlayerPrefs.GetInt("Score", 0);
+        PlayerBehaviour.instance.steps = PlayerPrefs.GetInt("Score", 0);
         stepsRecord = PlayerPrefs.GetInt("Record", 0);
 
         UpdateStepText();
@@ -34,12 +28,12 @@ public class StepsUI : MonoBehaviour
     void Update()
     {
 
-        PlayerPrefs.SetInt("Steps", playerBehaviour.steps);
+        PlayerPrefs.SetInt("Steps", PlayerBehaviour.instance.steps);
         PlayerPrefs.Save();
 
-        if (playerBehaviour.steps > stepsRecord)
+        if (PlayerBehaviour.instance.steps > stepsRecord)
         {
-            stepsRecord = playerBehaviour.steps;
+            stepsRecord = PlayerBehaviour.instance.steps;
             activateMedal = true;
             PlayerPrefs.SetInt("Record", stepsRecord);
             PlayerPrefs.Save();
@@ -47,14 +41,14 @@ public class StepsUI : MonoBehaviour
 
         UpdateStepText();
 
-        if (playerBehaviour.needLoseCanvas == true)
+        if (PlayerBehaviour.instance.needLoseCanvas == true)
         {
-            playerBehaviour.ShowLoseScreenUI();
-            stepsEndgameText.text = "Score: " + playerBehaviour.steps.ToString() + "\nRecord: " + stepsRecord.ToString();
+            PlayerBehaviour.instance.ShowLoseScreenUI();
+            stepsEndgameText.text = "Score: " + PlayerBehaviour.instance.steps.ToString() + "\nRecord: " + stepsRecord.ToString();
         }
     }
     private void UpdateStepText()
     {
-        stepsText.text = "Score: " + playerBehaviour.steps.ToString() + "\nRecord: " + stepsRecord.ToString();
+        stepsText.text = "Score: " + PlayerBehaviour.instance.steps.ToString() + "\nRecord: " + stepsRecord.ToString();
     }
 }

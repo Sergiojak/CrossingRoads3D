@@ -12,7 +12,6 @@ public class CarBehaviour : MonoBehaviour
         if (transform.position != waypoints[0].position)
         {
             transform.position = Vector3.MoveTowards(transform.position, waypoints[0].position, carSpeed * Time.deltaTime);
-           // Vector3 waypointLocation = (waypoints[0].position - transform.position).normalized;
         }
         else
         {

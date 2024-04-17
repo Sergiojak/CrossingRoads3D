@@ -4,24 +4,24 @@ using UnityEngine.EventSystems;
 public class LevelBehaviour : MonoBehaviour
 {
 
-    public GameObject ground;
+    public GameObject level;
 
     float jumpDistance = 2f;
-    public float timeAnim = 0.25f;
+    public float timeAnimation = 0.25f;
 
     public void Awake()
     {
-        ground = this.gameObject;
+        level = this.gameObject;
     }
 
     public void Start()
     {
-        SwipeController.instance.OnSwype += MoveTarget;
+        SwipeController.instance.OnSwipe += MoveTarget;
     }
 
     public void OnDisable()
     {
-        SwipeController.instance.OnSwype -= MoveTarget;
+        SwipeController.instance.OnSwipe -= MoveTarget;
     }
 
     void MoveTarget(Vector3 direction)
@@ -47,11 +47,11 @@ public class LevelBehaviour : MonoBehaviour
 
             if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
+                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical abajo
             }
             if (direction.z > 0)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
+                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical arriba
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador

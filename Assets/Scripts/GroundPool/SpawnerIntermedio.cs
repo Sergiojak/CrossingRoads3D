@@ -6,7 +6,7 @@ public class SpawnerIntermedio : MonoBehaviour
 {
     public List<GameObject> objectsList;
     public List<GameObject> inactiveObjects = new List<GameObject>();
-    public GameObject activeObject;
+    public GameObject triggerSpawnMidLevels;
 
     [SerializeField] GameObject spawnPoint;
     [SerializeField] GameObject propParent;
@@ -27,7 +27,7 @@ public class SpawnerIntermedio : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == activeObject)
+        if (other.gameObject == triggerSpawnMidLevels)
         {
             SpawnRandomPrefab();
         }
@@ -46,14 +46,14 @@ public class SpawnerIntermedio : MonoBehaviour
             {
                 int randomIndex = Random.Range(0, inactiveObjects.Count);
 
-                activeObject = inactiveObjects[randomIndex];
-                activeObject.SetActive(true);
+                triggerSpawnMidLevels = inactiveObjects[randomIndex];
+                triggerSpawnMidLevels.SetActive(true);
 
-                activeObject.transform.position = spawnPoint.transform.position;
+                triggerSpawnMidLevels.transform.position = spawnPoint.transform.position;
 
                 inactiveObjects.RemoveAt(randomIndex);
 
-                activeObject.transform.parent = propParent.transform;
+                triggerSpawnMidLevels.transform.parent = propParent.transform;
 
                 propsActivated++;
             }

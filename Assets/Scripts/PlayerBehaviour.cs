@@ -4,25 +4,25 @@ using UnityEngine.EventSystems;
 public class PlayerBehaviour : MonoBehaviour
 {
     public CoinBehaviour coinBehaviour;
-    public TodoMovimiento movimientoTodo;
+    public TodoMovimiento todoMovimiento;
     public StepsUI stepsUI;
 
     public static PlayerBehaviour instance;
     public static RaycastHit raycastDirection;
 
-    public bool playerIsDEAD = false;
+    public bool playerIsDead = false;
 
     float jumpDistance = 2f;
 
     [SerializeField]
     public GameObject player;
     [SerializeField]
-    SkinnedMeshRenderer playerMesh;
+    SkinnedMeshRenderer player3DModel;
     Rigidbody rb;
     [SerializeField]
-    BoxCollider playerCollider;
+    BoxCollider playerBoxCol;
 
-    public float timeAnim = 0.25f;
+    public float timeAnimation = 0.25f;
     public bool canJump = true;
 
     public int steps = 0;
@@ -44,6 +44,9 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI coinEndgameText;
 
+    [SerializeField]
+    AudioSource takingCoinAudio;
+
 
     public void Awake()
     {
@@ -62,7 +65,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         player = this.gameObject;
 
-        SwipeController.instance.OnSwype += MoveTarget;
+        SwipeController.instance.OnSwipe += MoveTarget;
 
         rb = GetComponent<Rigidbody>();
 
@@ -70,12 +73,12 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void OnDisable()
     {
-        SwipeController.instance.OnSwype -= MoveTarget;
+        SwipeController.instance.OnSwipe -= MoveTarget;
     }
 
     public void OnDestroy()
     {
-       SwipeController.instance.OnSwype -= MoveTarget;
+       SwipeController.instance.OnSwipe -= MoveTarget;
     }
     void MoveTarget(Vector3 directionOfSwype)
     {
@@ -111,10 +114,10 @@ public class PlayerBehaviour : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 180, 0);
                 }
                 //Movimiento HORIZONTAL del jugador y animación de saltito
-                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() =>
                 {
                     //baja del saltito
-                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnim / 2 ).setEase(LeanTweenType.easeOutQuad);
+                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnimation / 2 ).setEase(LeanTweenType.easeInOutCubic);
                 });
 
 
@@ -124,7 +127,7 @@ public class PlayerBehaviour : MonoBehaviour
                     stepsBack++;
                 }
 
-                if (directionOfSwype.normalized.z > 0 && stepsBack == 0 && movimientoTodo.stopAddingSteps == false) //arriba y que sume si los steps back son cero 
+                if (directionOfSwype.normalized.z > 0 && stepsBack == 0 && todoMovimiento.stopUsingStepCounter == false) //arriba y que sume si los steps back son cero 
                 {
                     steps++;
                 }
@@ -132,7 +135,7 @@ public class PlayerBehaviour : MonoBehaviour
                 { 
                     stepsBack--;
                 }
-                canJump = false;
+                canJump = false; //para que no se pueda spammear el salto se desactiva la bool del salto
             }
         }
     }
@@ -149,8 +152,8 @@ public class PlayerBehaviour : MonoBehaviour
         {
             //para que no se mueva de ninguna manera, no se vea y no se active el isJumping de nuevo
             rb.isKinematic = true;
-            playerMesh.enabled = false;
-            playerCollider.enabled = false;
+            player3DModel.enabled = false;
+            playerBoxCol.enabled = false;
             SwipeController.instance.enabled = false;
 
             //muestra el canvas y activa los botones
@@ -160,34 +163,31 @@ public class PlayerBehaviour : MonoBehaviour
             inGameUI.SetActive(false);
 
             //desactivar movimiento del swype...
-            playerIsDEAD = true;
+            playerIsDead = true;
         }
         if (other.gameObject.tag == "Coin")
         {
             coinBehaviour.coinAmount += 1;
             other.gameObject.SetActive(false);
             coinBehaviour.ShowCoinUI();
+            takingCoinAudio.Play();
         }
     }
  
     private void OnCollisionEnter(Collision collision)
     {
+
+        //Puede saltar al tocar el suelo o el tronco
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
         {
             canJump = true;
         }
     }
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Log"))
-        {
-        }
-    }
     public void ShowLoseScreenUI()
     {
-        LeanTween.alphaCanvas(canvasGroupLoseScreen, 1f, 1);
-        coinEndgameText.text = "Coins: " + coinBehaviour.coinAmount;
-        if (stepsUI.activateMedal == true)
+        LeanTween.alphaCanvas(canvasGroupLoseScreen, 1f, 1); //FadeIn Animation
+        coinEndgameText.text = "Coins: " + coinBehaviour.coinAmount; //actualizar texto
+        if (stepsUI.activateMedal == true) //que se active la medalla y el texto del nuevo record si llegas a la medalla
         {
             stepsUI.medalSprite.SetActive(true);
             stepsUI.newRecordEndgameText.text = "New Record!" + stepsUI.stepsRecord.ToString();

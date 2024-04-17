@@ -4,25 +4,25 @@ using UnityEngine.EventSystems;
 public class TodoMovimiento : MonoBehaviour
 {
     float jumpDistance = 2f;
-    public float timeAnim = 0.25f;
-    public bool stopAddingSteps = false;
+    public float timeAnimation = 0.25f;
+    public bool stopUsingStepCounter = false;
 
-    public GameObject ground;
+    public GameObject levels;
 
     //el CanMove lo tengo en el player
 
     public void Awake()
     {
-        ground = this.gameObject;
+        levels = this.gameObject;
     }
     public void Start()
     {
-        SwipeController.instance.OnSwype += MoveTarget;
+        SwipeController.instance.OnSwipe += MoveTarget;
     }
 
     public void OnDisable()
     {
-        SwipeController.instance.OnSwype -= MoveTarget;
+        SwipeController.instance.OnSwipe -= MoveTarget;
     }
 
     void MoveTarget(Vector3 direction)
@@ -47,28 +47,28 @@ public class TodoMovimiento : MonoBehaviour
 
                 if (raycastHit.collider.tag == "Obstacle")
                 {
-                    stopAddingSteps = true;
+                    stopUsingStepCounter = true;
                 }
             }
             else
             {
-                stopAddingSteps = false;
+                stopUsingStepCounter = false;
             }
 
 
             if (direction.normalized.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical abajo
+                LeanTween.move(levels, levels.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical abajo
             }
             if (direction.normalized.z > 0)
             {
-                LeanTween.move(ground, ground.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //vertical arriba
+                LeanTween.move(levels, levels.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical arriba
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador
             /* if (new Vector3(direction.x, 0, 0) != Vector3.zero)
              {
-                 LeanTween.move(ground, ground.transform.position + new Vector3(-direction.x, 0, 0) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeOutQuad); //horizontal
+                 LeanTween.move(ground, ground.transform.position + new Vector3(-direction.x, 0, 0) * jumpDistance, timeAnim / 2).setEase(LeanTweenType.easeInOutCubic); //horizontal
              }*/
         }
     }

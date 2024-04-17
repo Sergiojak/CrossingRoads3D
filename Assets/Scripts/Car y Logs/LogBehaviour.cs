@@ -14,13 +14,13 @@ public class LogBehaviour : MonoBehaviour
         if (transform.position != waypoints[0].position)
         {
             transform.position = Vector3.MoveTowards(transform.position, waypoints[0].position, logSpeed * Time.deltaTime);
-            // Vector3 waypointLocation = (waypoints[0].position - transform.position).normalized;
         }
         else
         {
             transform.position = waypoints[1].position;
         }
     }
+    //Seguir y abandonar el movimiento de los troncos al entrar o salir de la colisión
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))

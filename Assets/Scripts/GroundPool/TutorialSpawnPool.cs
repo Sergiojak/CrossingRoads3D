@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class TutorialSpawnPool : MonoBehaviour
 {
-    public GameObject[] initialTerrain;
-    public GameObject spawn;
+    public GameObject[] tutorial;
+    public GameObject tutorialSpawnpoint;
 
     void Start()
     {
-        int randomIndex = Random.Range(0, initialTerrain.Length);
-        initialTerrain[randomIndex].transform.position = spawn.transform.position;
+        int randomIndex = Random.Range(0, tutorial.Length);
+        tutorial[randomIndex].transform.position = tutorialSpawnpoint.transform.position;
     }
 }
