@@ -6,7 +6,7 @@ public class ButtonsEndgame : MonoBehaviour
     //Reiniciar juego, botón iniciar juego menú principal
     public void RestartGameButton()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
     //Salir y cerrar juego
     public void ExitGameButton()

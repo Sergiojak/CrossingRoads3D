@@ -47,6 +47,8 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     AudioSource takingCoinAudio;
 
+    [SerializeField]
+    AudioSource deathSound;
 
     public void Awake()
     {
@@ -114,10 +116,10 @@ public class PlayerBehaviour : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 180, 0);
                 }
                 //Movimiento HORIZONTAL del jugador y animación de saltito
-                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() =>
+                LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) + Vector3.up / 2 * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInSine).setOnComplete(() =>
                 {
                     //baja del saltito
-                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnimation / 2 ).setEase(LeanTweenType.easeInOutCubic);
+                    LeanTween.move(player, player.transform.position + new Vector3(directionOfSwype.normalized.x, 0, 0) - Vector3.up / 2 * jumpDistance , timeAnimation / 2 ).setEase(LeanTweenType.easeInSine);
                 });
 
 
@@ -164,6 +166,7 @@ public class PlayerBehaviour : MonoBehaviour
 
             //desactivar movimiento del swype...
             playerIsDead = true;
+            deathSound.Play();
         }
         if (other.gameObject.tag == "Coin")
         {
@@ -190,7 +193,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (stepsUI.activateMedal == true) //que se active la medalla y el texto del nuevo record si llegas a la medalla
         {
             stepsUI.medalSprite.SetActive(true);
-            stepsUI.newRecordEndgameText.text = "New Record!" + stepsUI.stepsRecord.ToString();
+            stepsUI.newRecordEndgameText.text = "New Record!: " + stepsUI.stepsRecord.ToString();
         }
         else
         {

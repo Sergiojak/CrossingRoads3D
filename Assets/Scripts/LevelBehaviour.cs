@@ -32,7 +32,7 @@ public class LevelBehaviour : MonoBehaviour
         {
             if (Physics.Raycast(PlayerBehaviour.instance.transform.position + new Vector3(0, 1f, 0f), direction, out raycastHit, 2f))
             {
-                if (raycastHit.collider.tag != "Ground" && raycastHit.collider.tag != "Log")
+                if (raycastHit.collider.tag != "Ground" && raycastHit.collider.tag != "Log" && raycastHit.collider.tag != "Coche")
                 {
                     if (direction.z != 0)
                     {
@@ -47,11 +47,11 @@ public class LevelBehaviour : MonoBehaviour
 
             if (direction.z < 0 && PlayerBehaviour.instance.stepsBack < 3)
             {
-                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical abajo
+                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInSine); //vertical abajo
             }
             if (direction.z > 0)
             {
-                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInOutCubic); //vertical arriba
+                LeanTween.move(level, level.transform.position + new Vector3(0, 0, -direction.normalized.z) * jumpDistance, timeAnimation / 2).setEase(LeanTweenType.easeInSine); //vertical arriba
             }
 
             //Movimiento horizontal del mundo, anulado para darle el movimiento horizontal al jugador
